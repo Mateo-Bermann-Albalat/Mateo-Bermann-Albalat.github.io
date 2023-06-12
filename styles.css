@@ -1,9 +1,13 @@
 body {
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 .header img {
-    width: 500px;
+    width: 100%;
+    height: 100vh; /* vh stands for Viewport Height */
+    object-fit: cover; /* This property is used to control how the image should be resized to fit its container */
 }
 
 .header p {
