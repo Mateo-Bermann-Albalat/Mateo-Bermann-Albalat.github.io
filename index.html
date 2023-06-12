@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* Prevents scrolling */
+        }
+        .header embed {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
-<embed src="Projecte Capstone Bicing-UB .pdf" type="application/pdf" />
-        <p>This is a picture</p>
-    </div>
-
-    <div class="container">
-        <div class="column">
-            <p>Column 1, Example 1</p>
-            <p>Column 1, Example 2</p>
-        </div>
-        <div class="column">
-            <p>Column 2, Example 1</p>
-            <p>Column 2, Example 2</p>
-        </div>
+        <embed src="Projecte_Capstone_Bicing-UB.pdf" type="application/pdf" />
     </div>
 </body>
 </html>
