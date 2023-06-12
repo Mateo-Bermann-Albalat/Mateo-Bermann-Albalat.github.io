@@ -1,26 +1,19 @@
-body {
-    font-family: Arial, sans-serif;
+body, html {
     margin: 0;
     padding: 0;
+    height: 100%;
+    overflow: hidden; /* Prevents scrolling */
 }
 
-.header img {
+.fullscreen-pdf {
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100%;
-    height: 100vh; /* vh stands for Viewport Height */
-    object-fit: cover; /* This property is used to control how the image should be resized to fit its container */
+    height: 100%;
 }
 
-.header p {
-    clear: both;
-    padding-top: 10px;
-}
-
-.container {
-    display: flex;
-    justify-content: space-between;
-}
-
-.column {
-    width: 50%;
-    padding: 20px;
+.fullscreen-pdf embed {
+    width: 100%;
+    height: 100%;
 }
