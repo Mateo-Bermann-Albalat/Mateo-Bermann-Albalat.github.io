@@ -35,6 +35,19 @@ h1 {
     width: 100%;
 }
 
+/* New class for the header section */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    margin: auto;
+}
+
+.header a {
+    margin: 0 10px; /* Add space around the links */
+}
+
 ul{
     font-family: Arial, sans-serif;
     margin: 4px;
@@ -54,4 +67,17 @@ li {
     .column {
         width: 100%;
     }
+}
+
+hr {
+    border: none;
+    border-top: 1px solid black; /* set the color and thickness of the line */
+    margin: 20px 0; /* add some vertical space around the line */
+}
+
+img {
+    width: 100px;   /* Adjust this to change the width */
+    height: 100px;  /* Adjust this to change the height */
+    object-fit: cover; /* This will make sure the image is scaled to fit its content box, cropping if necessary */
+    margin-right: 20px; /* Adds a bit of space to the right of the image */
 }
