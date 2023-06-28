@@ -13,6 +13,7 @@
         <a href="#annex1">2. Anexo: Variación espacial</a>
         <a href = "#annex2">3. Anexo: Variación temporal</a>
         <a href = "#annex3">4. Anexo: Vídeo aplicación</a>
+        <a href = "#annex4">5. Anexo: Creación del modelo, paso a paso</a>
 
         <div id="presentation">
             <embed src="Presentacio_classe.pdf" type="application/pdf" />
@@ -15468,13 +15469,1951 @@
 <p> Este gráfico representa el promedio del mes de junio de 2022 del incremento acumulativo de las bicis que se han dejado durante todo un día de las bicis que se han dejado y las bicis que se han cogido en todas las estaciones de Bicing.</p>
 <p> Los días escogidos han sido sólo los laborables, y el punto final implica el número de bicis que se han usado durante el día. Esta cifra puede oscilar de día en día laboravle entgre unos 4000 y 6000 bicicletas. Teniendo en cuenta que la información se recoge cada cinco minutos y los trayectos medios suelen durar 13,5 minutos, perdemos mucha información de bicicletas cogidas y dejadas. Por tanto, los datos reales deben ser bastante superiores a 1.239.482 según datos de Bicing. </p>
 <p>Este patrón es el que corresponde a cualquier día laborable, variando según las condiciones de la cantidad total de bicis usadas</p>
-<p>Se puede apreciar cómo a partir de las seis de la mañana hay un cambio de tendencia acumulada de las bicis que </p>
-
-
-
+<p>Se puede apreciar cómo a partir de las seis de la mañana hay un cambio de tendencia acumulada de las bicis que se cogen (veamos la línea roja) y se incrementa rápidamente hasta poco antes de las nueve de la mañana. A partir de ese momento, el ritmo de bicis cogidas se reduce y evoluciona de forma aproximadamente lineal hasta alrededor de las seis de la tarde, momento en que reduce el ritmo hasta quedar a cero a las doce de la noche.</p>
+<p>El ritmo de crecimiento del número de bicicletas dejadas (línea azul) se mantiene mucho más activo durante las primeras horas de la madrugada. Esto está asociado a una especie de distribución de las bicicletas por la noche por la empresa, pero el motivo no está claro, sobre todo teniendo en cuenta las diferencias entre las bicis que se cogen</p>
+<p>De la diferencia de las dos líneas (línea verde) son las bicicletas en uso. Se pueden apreciar dos picos alrededor de las 7:50 h y alrededor de las 8:50 h. Es el momento en que mucha gente que empieza su jornada sobre las 8 y 9h devuelve la bici a la estación, siendo mayoría las personas que empiezan a las 9 h. Otro pico se intuye sobre las 14:30, que puede estar relacionada con los viajes próximos (de ida o de vuelta) a la comida. Un último pico aparece alrededor de las 18:30, de la gente que vuelve a casa. A partir de esa hora, las bicis en uso van cayendo hasta cero.</p>
+<div class="image-container">
+  <img src="temps2.png" alt="Gràfic temporal 2">
+</div>
+<p>Este gráfico es el equivalente al anterior para fines de semana. Podemos apreciar el número de bicicletas usadas se reduce un 25% aproximadamente.</p>
+<p>También se observan diferencias en la dinámica de uso. Esta es mucho más suave que en el caso anterior. Se podría llegar a separar en tres zonas lineales. La primera des de las nueve de la mañana, con una pendiente menos elevada. A partir de las nueve se incrementa el uso de manera muy lineal hasta el pico de las ocho de la tarde, momento en el que se vuelven a reducir de manera similar a las primeras horas de la mañana.</p>
+<p>Como observación, podríamos intuir un pico antes de las nueve del mediodía, pero no está claro de que se pueda asociar a nada en concreto.</p>
 <h1 id="annex3">Vídeo aplicación</h1>
 <video controls>
   <source src="streamlit_presentacio.mp4" type="video/mp4">
-
 </video>
+
+
+<h1 id = "annex4"> Creación del modelo, paso por paso </h1>
+
+<h2><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Descarga de Datos Bicing</strong></span></span></h2>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Los datos sobre el servicio de sharing de bicicletas, bicing, est&aacute;n disponibles en la web del Ajuntament de Barcelona,&nbsp;<a href="https://opendata-ajuntament.barcelona.cat/resources/bcn/BicingBCN">https://opendata-ajuntament.barcelona.cat/resources/bcn/BicingBCN</a>&nbsp;.&nbsp;Los datos estan agrupados por meses y comprimidos con el formato <span style="color:#3498db">{year}_{month:02d}_{month_name}_BicingNou_ESTACIONS.7z</span>&nbsp; y se recopilan desde marzo de 2019. Para este proyecto, descargamos todos los datos del periodo marzo 2019 . diciembre 2022, que ser&aacute;n los datos que usaremos para el entrenamiento, los guardamos en formato csv, tambi&eacute;n por meses para su posterior procesamiento.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Cada uno de los ficheros contiene la siguiente informaci&oacute;n y tipo de dato:</span></p>
+
+<table border="0" cellpadding="1" cellspacing="1" style="width:786px">
+	<thead>
+		<tr>
+			<th scope="col" style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>Variable</strong></span></span></th>
+			<th scope="col" style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>Tipo</strong></span></span></th>
+			<th scope="col" style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>Descripci&oacute;n</strong></span></span></th>
+			<th scope="col" style="width:59px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>Min</strong></span></span></th>
+			<th scope="col" style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>Max</strong></span></span></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>station_id</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">int64</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">Identificador de la estaci&oacute;n</span></span></td>
+			<td style="width:59px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">1</span></span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">532</span></span></td>
+		</tr>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>num_bikes_available</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">int64</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">autoexplicativa</span></span></td>
+			<td style="width:59px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">0</span></span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">54 &nbsp;/ 198*</span></span></td>
+		</tr>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>num_bikes_available_types.mechanical</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">int64</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">autoexplicativa</span></span></td>
+			<td style="width:59px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">0</span></span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">54</span></span></td>
+		</tr>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>num_bikes_available_types.ebike</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">int64</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">autoexplicativa</span></span></td>
+			<td style="width:59px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">0</span></span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">41</span></span></td>
+		</tr>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>num_docks_available</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">int64</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">autoexplicativa</span></span></td>
+			<td style="width:59px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">0</span></span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">54 &nbsp; / 99*</span></span></td>
+		</tr>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>last_reported</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">int64</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">Tiempo en segundos de cuando se tom&oacute;&nbsp;el registro</span></span></td>
+			<td style="width:59px">&nbsp;</td>
+			<td style="width:74px">&nbsp;</td>
+		</tr>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>is_charging_station</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">bool</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">Si la estaci&oacute;n permite cargar bicis el&eacute;ctricas</span></span></td>
+			<td style="width:59px">&nbsp;</td>
+			<td style="width:74px">&nbsp;</td>
+		</tr>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>status</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">object</span></span></td>
+			<td style="width:355px">
+			<pre>
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">IN_SERVICE        
+MAINTENANCE       
+PLANNED 
+NOT_IN_SERVICE  
+END_OF_LIFE
+</span></span></pre>
+			</td>
+			<td style="width:59px">&nbsp;</td>
+			<td style="width:74px">&nbsp;</td>
+		</tr>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>is_installed</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">int64</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">Si la estaci&oacute;n est&aacute; instalada</span></span></td>
+			<td style="width:59px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">0</span></span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">1</span></span></td>
+		</tr>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>is_renting</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">int64</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">Si la estaci&oacute;n permite la entrega(desbloquo) de bicicletas</span></span></td>
+			<td style="width:59px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">0</span></span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">1</span></span></td>
+		</tr>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>is_returning</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">int64</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">Si la estaci&oacute;n permite la devoluci&oacute;n de bicicletas</span></span></td>
+			<td style="width:59px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">0</span></span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">1</span></span></td>
+		</tr>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>last_updated</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">int64</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">Tiempo en segundos de la &uacute;ltima actualizaci&oacute;n&nbsp;</span></span></td>
+			<td style="width:59px">&nbsp;</td>
+			<td style="width:74px">&nbsp;</td>
+		</tr>
+		<tr>
+			<td style="width:239px">
+			<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>traffic (a partir de finales de 2021)</strong></span></span></p>
+			</td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">float64</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">Desconocemos su significado, pero en la mayor&iacute;a de casos o no est&aacute; disponible o contiene NAN</span></span></td>
+			<td style="width:59px">&nbsp;</td>
+			<td style="width:74px">&nbsp;</td>
+		</tr>
+		<tr>
+			<td style="width:239px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px"><strong>ttl</strong></span></span></td>
+			<td style="width:61px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">int64</span></span></td>
+			<td style="width:355px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">Variable descartable para este proyecto</span></span></td>
+			<td style="width:59px">&nbsp;</td>
+			<td style="width:74px">
+			<p>&nbsp;</p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Debido al gran tama&ntilde;o de los ficheros, en un primer paso concatenamos los ficheros mensuales&nbsp;agrupando&nbsp;la informaci&oacute;n por a&ntilde;os, salvando cada a&ntilde;o en un fichero csv, y procedemos a analizar los datos a&ntilde;o por a&ntilde;o para ver qu&eacute; tipo de datos tenemos&nbsp;y hacer un primer procesado&nbsp;descartando&nbsp;aquellas variables que consideremos innecesarias para este proyecto o transformando algunas de ellas.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Hacemos las siguientes observaciones:</span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">La variable <strong>last_reported</strong> no tiene registro en algunos casos (en 2019 por ejemplo). La descartaremos.</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Nos quedamos con la variable <strong>last_udpated</strong>&nbsp;para saber en qu&eacute; momento se tomaron los datos, cambiaremos el formato a la fecha y hora correspondiente a&nbsp;nuestra zona horaria&nbsp;(timezone&nbsp;Europe/Madrid) creando&nbsp;las nuevas variables: <strong>year, month, day, hour, min</strong></span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Las variables <strong>ttl</strong>&nbsp;y&nbsp;<strong>traffic</strong> tambi&eacute;n las descartaremos. Est&aacute; &uacute;ltima variable no est&aacute; recogida durante los primeros a&ntilde;os, se incorpora a finalesl de 2021, pero en la mayoria de casos contine NAN</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Interpretamos los posibles valores de la variable <strong>status</strong> de la siguiente manera:</span>
+	<ul>
+		<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">IN_SERVICE: estaci&oacute;n en pleno funcionamiento</span></li>
+		<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">NOT_IN_SERVICE: estaci&oacute;n temporalmente fuera de servicio. Puede ser por unas horas debido a alg&uacute;n evento o por varios dias debido a obras en la zona</span></li>
+		<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">MAINTENANCE: la estaci&oacute;n est&aacute; siendo asistida por el servicio de bicing, a&ntilde;adiendo o sustrayendo las bicicletas disponible en esa estaci&oacute;n. Ese proceso dura unos minutos</span></li>
+		<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">PLANNED: estaci&oacute;n planificada pero todavia no est&aacute; en servicio.&nbsp;</span></li>
+		<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">END_OF_LIFE: estaci&oacute;n suprimida</span></li>
+	</ul>
+	</li>
+</ul>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Tambi&eacute;n observamos que el&nbsp;n&uacute;mero de [&nbsp;NOT_IN_SERVICE + MAINTENANCE + PLANNED] &nbsp;equivale al n&uacute;mero de &nbsp;[<strong>is_returning</strong>==0] ; y que&nbsp;el n&uacute;mero de [PLANNED] equivale al n&uacute;mero [<strong>is_installed</strong>==0].&nbsp;</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Tambi&eacute;n vemos que cuando las estaciones tienen un estado distinto a IN_SERVICE los datos &nbsp;sobre <strong>num_bikes_available</strong>, <strong>num_bikes_available_types.ebike</strong>, <strong>num_bikes_available_types.mechanical</strong> y <strong>num_docks_available</strong> tienen inconsistencias. En la mayoria de casos num_bikes_available est&aacute; a cero cuando el detalle bicicletas el&eacute;ctricas y mec&aacute;nicas dice lo contrario; y tambi&eacute;n hay varios casos con num_bike_available y num_docks_available ambos a cero. Adem&aacute;s en esos casos no es posible devolver bicicletas como acabamos de comentar arriba, por lo que a efectos pr&aacute;cticos no hay docks disopnibles para el usuario. Por todo ello procederemos a eliminar los records en los que <strong>status</strong> != IN_SERVICE</span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Detectamos 205 casos con datos incorrectos&nbsp;(todos los valores de bicicleta tienen el valor 99* &oacute;&nbsp;198*,claramente valores fuera de rango)&nbsp;de estaciones aparentemente en servicio en el <strong>a&ntilde;o 2020, </strong>y alguno en <strong>2021</strong>. Procedemos a eliminarlos</span></li>
+</ul>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width:992px">
+	<tbody>
+		<tr>
+			<td style="width:982px">
+			<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Out[43]:</span></p>
+
+			<table border="1">
+				<thead>
+					<tr>
+						<th>&nbsp;</th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">station_id</span></th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num_bikes_available</span></th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num_bikes_available_types.mechanical</span></th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num_bikes_available_types.ebike</span></th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num_docks_available</span></th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">is_installed</span></th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">is_renting</span></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1110164</span></th>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">529</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">198</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">99</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">99</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">99</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+					</tr>
+					<tr>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1110652</span></th>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">529</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">198</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">99</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">99</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">99</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+					</tr>
+					<tr>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+					</tr>
+					<tr>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4386792</span></th>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">529</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">198</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">99</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">99</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">99</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+					</tr>
+					<tr>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4387298</span></th>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">529</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">198</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">99</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">99</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">99</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">205 rows &times; 13 columns</span></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Por &uacute;ltimo vemos que quedan algunos casos donde num_bikes_available y num_docks_available ambos est&aacute;n a cero, cuando la estaci&oacute;n est&aacute; IN_SERVICE. Esos casos en lugar de eliminarlos los estamos considerando como estaciones que no aceptan la devoluci&oacute;n de bicicletas, como si estuvieran llenas.</span></p>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+	<tbody>
+		<tr>
+			<td>
+			<table border="1">
+				<thead>
+					<tr>
+						<th>&nbsp;</th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">station_id</span></th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num_bikes_available</span></th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num_bikes_available_types.mechanical</span></th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num_bikes_available_types.ebike</span></th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num_docks_available</span></th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">status</span></th>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">is_renting</span></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">657079</span></th>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">79</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">IN_SERVICE</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+					</tr>
+					<tr>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">659099</span></th>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">79</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">IN_SERVICE</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+					</tr>
+					<tr>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+					</tr>
+					<tr>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1643723</span></th>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">148</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">IN_SERVICE</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+					</tr>
+					<tr>
+						<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2075695</span></th>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">394</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">IN_SERVICE</span></td>
+						<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">9591 rows &times; 13 columns</span></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">El formato de los ficheros .csv que guardamos con las informaci&oacute;n anual sobre el bicing,&nbsp;<strong>Bicing_{year}.csv,</strong>&nbsp;contendr&aacute; esta informaci&oacute;n:</span></p>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width:998px">
+	<thead>
+		<tr>
+			<th scope="col" style="width:72px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">station_id</span></th>
+			<th scope="col" style="width:147px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num_bikes_available</span></th>
+			<th scope="col" style="width:241px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>num_bikes_available_types.mechanical</strong></span></th>
+			<th scope="col" style="width:212px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>num_bikes_available_types.ebike</strong></span></th>
+			<th scope="col" style="width:147px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num_docks_available</span></th>
+			<th scope="col" style="width:33px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">year</span></th>
+			<th scope="col" style="width:32px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">month</span></th>
+			<th scope="col" style="width:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">day</span></th>
+			<th scope="col" style="width:42px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">hour</span></th>
+			<th scope="col" style="width:41px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">min</span></th>
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Estos ficheros ser&aacute;n los que usaremos para analizar con m&aacute;s detalle qu&eacute; ocurri&oacute; en 2020 y c&oacute;mo funciona el bicing en la actualidad,&nbsp;2022, mostrando gr&aacute;ficas y mapas&nbsp;coloreads din&aacute;micamente.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Una de las principales observaciones es la diferencia de n&uacute;mero de registros incluidos cada a&ntilde;o: los a&ntilde;os 2021 y 2020 tienes n&uacute;mero de registros similares; el a&ntilde;o 2019, cuando empez&oacute; el registro, tiene algo menos, como si los registros estuvieran m&aacute;s espaciados en el tiempo; y el a&ntilde;o 2020 tiene menos debido principalmente a la pandemia, cuando durante unas semanas el servicio se lleg&oacute; incluso a interrumpir totalmente (mediados de marzo a finales de abril).</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src=" https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura1_2019.png" style="height:278px; width:350px" /><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura1_2020.png" style="height:285px; width:350px" /></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura1_2021.png" style="height:285px; width:350px" /><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura2_2022.png" style="height:285px; width:350px" /></span></p>
+
+<h2><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">Descarga megadatos de las estaciones</span>&nbsp;</span></h2>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">La informaci&oacute;n de cada estaci&oacute;n en el a&ntilde;o 2023, ubicaci&oacute;n, direcci&oacute;n, capacidad, etc, est&aacute; disponible en la web del ayuntamiento, en formato json. Descargamos el fichero, que contiene:</span></p>
+
+<pre>
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif">RangeIndex: 505 entries, 0 to 504
+Data columns (total 14 columns):
+ #   Column                  Non-Null Count  Dtype  
+---  ------                  --------------  -----  
+<strong> 0   station_id              505 non-null    int64  </strong>
+<strong> 1   name                    505 non-null    object</strong> 
+<span style="color:#999999"> 2   physical_configuration  505 non-null    object</span> 
+<strong> 3   lat                     505 non-null    float64
+ 4   lon                     505 non-null    float64
+ 5   altitude                505 non-null    float64
+ 6   address                 505 non-null    object 
+ 7   post_code               505 non-null    object 
+ 8   capacity                505 non-null    int64</strong>  
+<span style="color:#999999"> 9   is_charging_station     505 non-null    bool   
+ 10  nearby_distance         505 non-null    float64
+ 11  _ride_code_support      505 non-null    bool   
+ 12  rental_uris             0 non-null      object 
+ 13  cross_street            1 non-null      object </span>
+dtypes: bool(2), float64(4), int64(2), object(6)</span></pre>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">y eliminamos los campos que no nos interesan (las marcadas en gris)&nbsp;&nbsp;y guardamos el resto en formato .csv para us uso posterior, por ejemplo filtrar los datos de los a&ntilde;os a entrenar para que incluyan solo las estaciones v&aacute;lidas en 2023.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>WARNING ,&nbsp;</strong>vemos que una de las estaciones no tiene informaci&oacute;n sobre la capacidad,. Buscamos dicha informaci&oacute;n, complementamos el dato y guardamos como&nbsp;<strong>Informacio_Estacions_Bicing.csv</strong></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura3_missingcapacity.png" style="height:90px; width:600px" /></span></p>
+
+<h2><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">Postproceso de los datos para el training</span></span></h2>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Recuperamos los ficheros .csv por a&ntilde;o que hab&iacute;amos generado, concatenamos para obtener un &uacute;nico dataframe y seguimos con las transformaciones para obtener un dataframe de este tipo</span></p>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">station_id</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">year</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">month</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">day</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">hour</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">capacity</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">altitude</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">percentage_docks_available</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-4</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-3</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-2</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-1</span></th>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2019</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">28</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">22</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">46.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">16.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.021739</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.304348</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.280435</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.244565</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.054348</span></td>
+		</tr>
+		<tr>
+			<th scope="col">&nbsp;</th>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">&nbsp;</span></span></p>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">Filtrado estaciones operativas en 2023</span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Filtramos los datos para quedarnos s&oacute;lo con aquellos que correspondan a estaciones operativas en 2023 y en los a&ntilde;o anteriores.</span></p>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">C&aacute;lculo variable target</span></span></h3>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Recuperamos el .csv con los metadatos de las estaciones y hacemos merge con el dataframe base para quedarnos con la capacidad.</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Creamos la variable target, <strong>percentage_docks_available</strong> como el porcentage de&nbsp;<strong>num_docks_available</strong>&nbsp; respecto la&nbsp;<strong>capacity </strong>de la estaci&oacute;n. Detectamos peque&ntilde;os errores, en algunos casos el n&uacute;mero de docks es algo mayo que la capacidad y reajustamos el porcentage a 1</span></li>
+</ul>
+
+<table align="left" border="1" cellpadding="1" cellspacing="1" style="width:691px">
+	<thead>
+		<tr>
+			<th>
+			<p style="margin-left:40px">&nbsp;</p>
+			</th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">station_id</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">year</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">month</span></th>
+			<th style="width:22px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">day</span></th>
+			<th style="width:26px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">hour</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num_docks_available</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">capacity</span></th>
+			<th style="width:223px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">percentage_docks_available</span></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1034369</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">11</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2022</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td style="width:22px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">11</span></td>
+			<td style="width:26px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">20</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">35</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">34</span></td>
+			<td style="width:223px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.029412</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1035483</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">11</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2022</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td style="width:22px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">15</span></td>
+			<td style="width:26px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">18</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">35</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">34</span></td>
+			<td style="width:223px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.029412</span></td>
+		</tr>
+	</tbody>
+</table>
+
+<pre>
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif">&nbsp;</span></pre>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left:40px">&nbsp;</p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Solucionamos con esta instrucci&oacute;n,</span></p>
+
+<p style="margin-left:80px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">dftotrain22.loc[(dftotrain22.percentage_docks_available &gt; 1),&#39;percentage_docks_available&#39;]=1</span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Eliminamos la columnas que no necesitaremos:&nbsp;<strong>num_bikes_available</strong>,&nbsp;<strong>num_bikes_available_types.mechanical</strong>,&nbsp;<strong>num_bikes_available_types.ebike</strong>, <strong>num_docsk_available</strong>,&nbsp;<strong>min</strong></span></li>
+</ul>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">C&aacute;lculo columnas ctx-4, ctx-3, ctx-2, ctx-1</span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Con el objetivo de reducir el tama&ntilde;o de los ficheros se propone en este caso a&ntilde;adir como variables lo porcentage de dock disponibles las horas previas, hasta 4 horas antes</span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">df=df.groupby([&#39;station_id&#39;,&#39;year&#39;,&#39;month&#39;,&#39;day&#39;,&#39;hour&#39;],as_index=False).mean(numeric_only=True)&nbsp;</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">a&ntilde;adimos las columnas basadas en los porcentages anteriores<br />
+	&nbsp; &nbsp; df[&#39;ctx-4&#39;] = df[&#39;percentage_docks_available&#39;].shift(periods=4, fill_value=0)<br />
+	&nbsp; &nbsp; df[&#39;ctx-3&#39;] = df[&#39;percentage_docks_available&#39;].shift(periods=3, fill_value=0)<br />
+	&nbsp; &nbsp; df[&#39;ctx-2&#39;] = df[&#39;percentage_docks_available&#39;].shift(periods=2, fill_value=0)<br />
+	&nbsp; &nbsp; df[&#39;ctx-1&#39;] = df[&#39;percentage_docks_available&#39;].shift(periods=1, fill_value=0)</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">eliminamos las filas intermedias puesto que la informaci&oacute;n ya se tiene en las variables adicionales&nbsp;<br />
+	&nbsp; &nbsp; df_length, initial_row, row_increase = df.shape[0], 4, 5<br />
+	&nbsp; &nbsp; df = df.iloc[initial_row:df_length:row_increase]</span></li>
+</ul>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Ahora tenemos esto:</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura4_trainformat.png" style="height:173px; width:800px" /></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">y la correspondiente descripci&oacute;n, cuyos valores nos parecen razonables:</span></p>
+
+<table border="1">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">station_id</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">year</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">month</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">day</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">hour</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">capacity</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">altitude</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">percentage_docks_available</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-4</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-3</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-2</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-1</span></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">count</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.972606e+06</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.972606e+06</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.972606e+06</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.972606e+06</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.972606e+06</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.972606e+06</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.972606e+06</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.972606e+06</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.972606e+06</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.972606e+06</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.972606e+06</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.972606e+06</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">mean</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.505664e+02</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.020710e+03</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">6.914189e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.576251e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.151709e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.703986e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.388781e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">5.772495e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">5.771808e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">5.771795e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">5.771876e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">5.771720e-01</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">std</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.447714e+02</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.070144e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.351605e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8.807712e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">6.921322e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">6.407054e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.114515e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.858497e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.859283e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.858136e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.858224e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.858770e-01</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">min</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.019000e+03</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.200000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000e+00</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">25%</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.260000e+02</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.020000e+03</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">6.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.400000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.589744e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.589744e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.589744e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.589744e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.583333e-01</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">50%</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.500000e+02</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.021000e+03</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">7.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.600000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.200000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.700000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.400000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">6.200000e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">6.203704e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">6.201923e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">6.203704e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">6.200000e-01</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">75%</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.700000e+02</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.022000e+03</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.000000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.300000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.800000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.000000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4.900000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8.240741e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8.240741e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8.240741e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8.240741e-01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8.240741e-01</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">max</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">5.190000e+02</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.023000e+03</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.200000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.100000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.300000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">5.400000e+01</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.660000e+02</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.000000e+00</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.000000e+00</span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Por &uacute;ltimo, guardamos el fichero de training en formato csv con el nombre&nbsp;<strong>Bicing_ToTrain.csv </strong>para el poterior an&aacute;lisis,&nbsp;postproceso (a&ntilde;adir m&aacute;s variables), entrenamiento y finalmente selecci&oacute;n del modelo:</span></p>
+
+<h2><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">Carga datos meteorol&oacute;gicos</span></span></h2>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Creemos que disponer de algunos datos meteorol&oacute;gicos para el entrenamiento del modelo pueden ser de ayuda. Para ello accedemos a los datos hist&oacute;ricos publicados por Meteocat, no s&oacute;n p&uacute;blicos pero se da acceso gratuito temporal para uso educativo, no lucrativo.&nbsp;</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura0_observatoris.png" style="height:369px; width:600px" /></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">En Barcelona hay las siguientes estaciones meteorol&oacute;gicas automatizadas:</span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Barcelona - el Raval: &#39;X4&#39;</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Barcelona Zona Universitaria: &#39;X8&#39;</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Barcelona - Observatori Fabra (Tibidabo): &#39;D5&#39;</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Barcelona - Zoo (Ciutadella): &#39;X2&#39; (nom&eacute;s t&eacute; variables sobre temperatura i humitat :( )</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Port de Barcelona - Bocana Sud: &#39;Y7&#39; (al Prat de Llobregat)</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Port de Barcelona - ZAL Prat: &#39;Y9&#39; (al Prat de Llobregat)</span></li>
+</ul>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Dadas las ubicaciones de las estaciones de bicing, descartamos las ubicadas en el puerto de Barcelona. Tambi&eacute;n descartamos la del Zoo de Barcelona puesto que solo recoge un par de datos: temperatura y humedad relativa. Nos descargamos de la web de meteocat los metadatos de las variables y de las estaciones meteorol&oacute;gicas para poder definir correctamente la URL de descarga e interpretar los valores de las variables meteorol&oacute;gicas.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Los datos se ofrecen para un dia y estaci&oacute;n determinados (cada estaci&oacute;n tiene un c&oacute;digo). Procederemos a descargar los datos para todo el perido de entrenamiento, de marzo 2019 a diciembre de 2022, y luego para el set de predicci&oacute;n (primer trimestre de 2023) usando el c&oacute;digo python:</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">import requests</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">key = &#39;LaClaveProporcionadaPorMeteocat&#39;;<br />
+url0 = &#39;https://api.meteo.cat/xema/v1/estacions/mesurades&#39;</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>def get_meteocat_day_data</strong>(codi, year, month, day):<br />
+&nbsp; &nbsp; &quot;&quot;&quot;<br />
+&nbsp; &nbsp; Function that downloads the data for a specific day of the year from meteocat website, converts it&nbsp;<br />
+&nbsp; &nbsp; to a DataFrame and saves it to a csv file for future use. &nbsp;Sample of URL:</span></p>
+
+<pre style="margin-left:40px">
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif">   <span style="font-size:12px"> <span style="color:#3498db">https://api.meteo.cat/xema/v1/estacions/mesurades/X2/2022/02/01</span></span></span></pre>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">&nbsp; &nbsp; NOTE: the number of queries to meteocat site is limited in the time, hence we save the info in csv files<br />
+&nbsp; &nbsp; &quot;&quot;&quot;<br />
+&nbsp; &nbsp; url_i = url0+&#39;/{}/{}/{:02d}/{:02d}&#39;.format(codi,year,month,day)<br />
+&nbsp; &nbsp; print(url_i)<br />
+&nbsp; &nbsp; response_i = requests.get(url_i, headers={&quot;Content-Type&quot;: &quot;application/json&quot;, &quot;X-Api-Key&quot;: key})</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">&nbsp; &nbsp; assert (response_i.status_code == 200), f&quot;response status code: {response_i.status_code}&quot;<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; dbmet = pd.read_json(response_i.text)<br />
+&nbsp; &nbsp; <strong>return</strong> &nbsp;pd.json_normalize(dbmet[&#39;variables&#39;][0], record_path=[&#39;lectures&#39;],meta=[&#39;codi&#39;])</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Vamos leyendo la informaci&oacute;n por dia y estaci&oacute;n y la guardamos agrupadas por meses, para mantener el paralelismo con los datos del bicing, con el formato&nbsp;{year}/{year}_{month:02d}_MeteoBCN{name}_{code}.csv</span></p>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">Procesado datos meteorol&oacute;gicos</span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Los datos nos llegan con este formato, donde codi es el identificador de la variable meteorol&oacute;gica medida, y la base horaria es cada 30 minutos:</span></p>
+
+<table border="\&quot;1\&quot;">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">data</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">dataExtrem</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">valor</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">estat</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">baseHoraria</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">codi</span></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020-12-01T00:00Z</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020-12-01T00:00Z</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1018.6</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">V</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">SH</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020-12-01T00:30Z</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020-12-01T00:37Z</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1018.5</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">V</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">SH</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020-12-01T01:00Z</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020-12-01T01:11Z</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1018.4</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">V</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">SH</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1005</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020-12-31T22:30Z</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020-12-31T22:30Z</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">V</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">SH</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">72</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1006</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020-12-31T23:00Z</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020-12-31T23:00Z</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">V</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">SH</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">72</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1007</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020-12-31T23:30Z</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020-12-31T23:30Z</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">V</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">SH</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">72</span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">La fecha est&aacute; en formato UTC, por lo que tendremos que convertirla a formato time zone Europe/Madrid para mantener la coherencia con&nbsp;&nbsp;los datos del Bicing y poder concatenarlos correctamente..</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Nos aseguramos que todos los datos estan verificados.&nbsp;De las m&aacute;s de 20 variables meteorol&oacute;gicas que se recogen por estaci&oacute;n, usaremos solo las siguientes:</span></p>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width:410px">
+	<thead>
+		<tr>
+			<th scope="col"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Nombre</span></th>
+			<th scope="col" style="width:71px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Unidades</span></th>
+			<th scope="col" style="width:82px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Acr&oacute;nimo</span></th>
+			<th scope="col" style="width:89px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">C&oacute;digo</span></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Presi&oacute;n atmosf&eacute;rica</span></td>
+			<td style="width:71px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">hPA</span></td>
+			<td style="width:82px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">P</span></td>
+			<td style="width:89px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">34</span></td>
+		</tr>
+		<tr>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Temperatura</span></td>
+			<td style="width:71px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">&ordm;C</span></td>
+			<td style="width:82px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">T</span></td>
+			<td style="width:89px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">32</span></td>
+		</tr>
+		<tr>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Humedad relativa</span></td>
+			<td style="width:71px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">%</span></td>
+			<td style="width:82px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">HR</span></td>
+			<td style="width:89px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">33</span></td>
+		</tr>
+		<tr>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Precipitaci&oacute;n</span></td>
+			<td style="width:71px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">mm</span></td>
+			<td style="width:82px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">PPT</span></td>
+			<td style="width:89px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">35</span></td>
+		</tr>
+		<tr>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Velocidad viento</span></td>
+			<td style="width:71px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">m/s</span></td>
+			<td style="width:82px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">VV10</span></td>
+			<td style="width:89px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">30</span></td>
+		</tr>
+		<tr>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Direcci&oacute;n viento</span></td>
+			<td style="width:71px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">&ordm;</span></td>
+			<td style="width:82px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">DV10</span></td>
+			<td style="width:89px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">31</span></td>
+		</tr>
+		<tr>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Irradiancia solar</span></td>
+			<td style="width:71px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">W/m&sup2;</span></td>
+			<td style="width:82px">&nbsp;</td>
+			<td style="width:89px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">36</span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Recuperamos los datos salvados mensualmente por estaci&oacute;n, los concatenamos agrupados por estaci&oacute;n, &nbsp;descartamos dataExtrem, estat, y baseHoraria pues ya no los necesitamos, agrupamos los datos por fecha y hora ,&nbsp;pivotamos la tabla para que las variables queden como columnas, &nbsp;reemplazamos los c&oacute;digos (num&eacute;ricos) por el acr&oacute;nimo correspondiente,&nbsp;y salvamos temporalmente en un dataframe por estaci&oacute;n.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Por &uacute;ltimo unificamos en un solo dataframe, calculando la media de las tres estaciones consideradas y salvamos en un fichero para posterior uso, con el nombre <strong>All_MeteoBCN.csv</strong></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Para el training s&oacute;lo usaremos los datos que van de marzo 2019 a dicembre 2022, mientras que los del primer trimestre de 2023 se dejaran para la predicci&oacute;n.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Cuando unamos estos datos a los del training tendr&aacute; este aspecto:</span></p>
+
+<table border="\&quot;1\&quot;">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">year</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">month</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">day</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">hour</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">RS</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">PPT</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">P</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">HR</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">T</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">DV10</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">VV10</span></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2019</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1003.600000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">80.666667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">12.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">197.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.200000</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2019</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1003.566667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">77.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">12.100000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">195.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.700000</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2019</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1003.466667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">79.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">11.633333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">250.666667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.900000</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">35802</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2023</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">31</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">23</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">996.633333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">74.666667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">14.433333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">63.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.233333</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">35803</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2023</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">996.700000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">77.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">14.100000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">78.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.466667</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">35804</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2023</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">996.900000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">80.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">13.866667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">124.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.500000</span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+<h2><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">Carga datos transporte p&uacute;blico y distancia a las playas</span></span></h2>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Tambi&eacute;n creemos que conocer cu&aacute;ntas paradas de transporte p&uacute;blico, bus o metro, quedan cerca de una estaci&oacute;n de bicing puede contribuir al modelo de predicci&oacute;n. Para ello accedemos a los datos publicados por el Ajuntament de Barcelona <a href="https://opendata-ajuntament.barcelona.cat/resources/bcn/GuiaBCN/TRANSPORTS.csv">https://opendata-ajuntament.barcelona.cat/resources/bcn/GuiaBCN/TRANSPORTS.csv</a>&nbsp;y usando la ubicaci&oacute;n de cada estaci&oacute;n (latitud y longitud) y la de las paradas de transporte, calculamos las que quedan a menos de medio kil&oacute;metro de cada estaci&oacute;n, las contamos y asignamos un n&uacute;mero entero a cada estaci&oacute;n.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">De forma similar procedemos para calcular la dist&agrave;ncia, en metros, de cada estaci&oacute;n a las playas:<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&#39;Platja de Sant Sebasti&agrave;&#39;,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&#39;Platja de la Nova Ic&agrave;ria&#39;,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&#39;Platja del Somorrostro&#39;,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&#39;Platja de la Barceloneta&#39;,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&#39;Platja de la Nova Mar Bella&#39;,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&#39;Platja de Llevant&#39;,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&#39;Platja del Bogatell&#39;,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&#39;Platja de Sant Miquel&#39;,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&#39;Zona de Banys&#39;</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Estas dos nuevas variables las a&ntilde;adimos al fichero de metadatos de las estaciones, <strong>Informacio_Estacions_Bicing.csv</strong>, para posteriormente a&ntilde;adirlo al training o a los datos a predecir si finalmente se tienen en &nbsp;cuenta, y se llamar&aacute;n <strong>n_transp_500m</strong> y&nbsp;<strong>min_dist_to_beach</strong>.&nbsp;El aspecto del dataframe cuando lo carguemos ser&aacute;:</span></p>
+
+<table border="\&quot;1\&quot;">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">station_id</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">name</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">lat</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">lon</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">altitude</span></th>
+			<th style="width:141px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">address</span></th>
+			<th style="width:75px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">post_code</span></th>
+			<th style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">capacity</span></th>
+			<th style="width:102px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">n_transp_500m</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">min_dist_to_beach</span></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">GRAN VIA CORTS CATALANES, 760</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">41.397978</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.180107</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">16.0</span></td>
+			<td style="width:141px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">GRAN VIA CORTS CATALANES, 760</span></td>
+			<td style="width:75px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8013</span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">46</span></td>
+			<td style="width:102px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2048.805533</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">C/ ROGER DE FLOR, 126</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">41.395488</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.177198</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">17.0</span></td>
+			<td style="width:141px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">C/ ROGER DE FLOR, 126</span></td>
+			<td style="width:75px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8013</span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">29</span></td>
+			<td style="width:102px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">11.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2012.807353</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td style="width:141px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td style="width:75px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td style="width:102px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">503</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">518</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">C/ LLOBREG&Oacute;S, 115</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">41.424689</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.157049</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">112.0</span></td>
+			<td style="width:141px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">C/ LLOBREG&Oacute;S, 115</span></td>
+			<td style="width:75px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8032</span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">27</span></td>
+			<td style="width:102px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">5370.528992</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">504</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">519</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">C/ PEDRELL, 52</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">41.424655</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.166289</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">110.0</span></td>
+			<td style="width:141px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">C/ PEDRELL, 52</span></td>
+			<td style="width:75px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8032</span></td>
+			<td style="width:74px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">24</span></td>
+			<td style="width:102px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4777.728819</span></td>
+		</tr>
+	</tbody>
+</table>
+
+<h2>&nbsp;</h2>
+
+<h2><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">Carga datos festivos y eventos</span></span></h2>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Generamos un fichero csv con la relaci&oacute;n de dias festivos, distintos a domingo desde marzo 2019 hasta la fecha. Para el training usaremos solo hasta diciembre 2022 inclu&iacute;do, y las fechas de 2023 seran para la predicci&oacute;n. El formato de la fecha es: &nbsp;yyy-mm-dd</span></p>
+
+<table border="1">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">date</span></span></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">0</span></span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">2019-01-01</span></span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">1</span></span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">2019-01-05</span></span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">2</span></span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">2019-04-19</span></span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">...</span></span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">...</span></span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">69</span></span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">2023-12-25</span></span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">70</span></span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:12px">2023-12-26</span></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Usaremos estos datos para crear en el fichero de training una variable 0/1 llamada holiday</span><br />
+&nbsp;</p>
+
+<h2><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">Carga datos adicionales</span></span></h2>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Adem&aacute;s de los datos mencionados anteriormente, creemos interesante a&ntilde;adir algunas variables m&aacute;s al dataset de training:</span></p>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">Metadatos de las estaciones</span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Incorporaremos las siguientes variables de los metadatos de las estaciones:</span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>altitude</strong></span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>capacity</strong></span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>post_code</strong></span></li>
+</ul>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">Variables obtenidas a partir de los datos iniciales del dataset de training&nbsp;</span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Del an&aacute;lisis hecho de los datos &nbsp;concluimos que las siguientes variables, calculadas a partir de las fechas , se deber&iacute;an incluir:</span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>weekend</strong>: 1 si el dia de la semana es s&aacute;bado o domingo; 0 en caso contrario</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>peekhour</strong>: &nbsp;1 si &nbsp;laborable y la hora est&aacute; entre 8 y 10 &oacute; entre 17 y 19; 0 en caso contrario</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>holiday</strong>: 1 si festivo distinto de domingo; 0 en caso contrario</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>season</strong>: estaci&oacute;n del a&ntilde;o -&gt; 1 invierno; 2 primavera u oto&ntilde;o; 3 verano,</span></li>
+</ul>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">Zonas de estaciones de bicicletas</span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Como usuarios del bicing y tambi&eacute;n analizando los datos hemos visto que ciertas estaciones parecen tener &nbsp;un comportamiento similar a lo largo del tiempo. Tenemos problemas computacionales si aplicamos OneHotEncoder a variables con muchos valores, por ejemplo a station_id &nbsp;(505 opciones), por lo que decidimos agrupar las estaciones en cinco tipos. La variable se llamar&aacute; <strong>zone</strong>&nbsp;y los valores posibles son:</span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>bicing_platges</strong>: todas las estaciones cerca de la playa</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>bicing_pcatalunya</strong>: todas las estaciones del centro y alrededor incluyendo universidad de Barcelona, plaza Urquinaona..centro</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>bicing_uni</strong>: las estaciones alreadedor de la zona universitaria diagonal</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>bicing_alta</strong>: las estaciones que se encuentra a m&aacute;s de 60 metros del nivel del mar (subir cuesta arriba puede ser un inconveniente a usar el bicing)</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>bicing_other</strong>: el resto de estaciones</span></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Finalmente cargamos nuestro dataframe de training inicial con todas las variables mencionadas anteriormente. Para ellos crearemos un pipeline, add_features, &nbsp;para poder a&ntilde;adir estas variables &nbsp;tambi&eacute;n al conjunto de test o validaci&oacute;n, y a las futuras predicciones que queramos hacer. Si finalmente alguna de las variables mencionadas anteriormente no se incluyera en el modelo, corregir&iacute;amos el pipeline. El aspecto que tendr&aacute; nuestro dataframe de training ahora ser&aacute;:</span></p>
+
+<table border="1">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">station_id</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">year</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">month</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">day</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">hour</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">capacity</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">altitude</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">percentage_docks_available</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-4</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-3</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">holiday</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">season</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">zone</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">RS</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">PPT</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">P</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">HR</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">T</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">DV10</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">VV10</span></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2019</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">28</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">22</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">46.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">16.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.021739</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.304348</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.280435</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">other</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1007.433333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">65.666667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">11.433333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">283.666667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.766667</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2019</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">29</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">46.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">16.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.009058</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.003623</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">other</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1006.266667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">47.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">10.800000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">307.666667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.866667</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2019</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">29</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">46.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">16.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.432971</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.009058</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.007246</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">other</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">247.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1007.366667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">53.666667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">11.900000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">118.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.733333</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2972603</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">519</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2022</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">12</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">31</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">13</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">24.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">110.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.871528</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.902778</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">alta</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">430.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1003.866667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">37.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">20.700000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">259.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.633333</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2972604</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">519</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2022</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">12</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">31</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">18</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">24.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">110.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.906250</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.965278</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.944444</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">alta</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1004.066667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">72.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">15.300000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">244.666667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.033333</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2972605</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">519</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2022</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">12</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">31</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">23</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">24.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">110.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.583333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.885417</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.760417</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">alta</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1005.466667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">73.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">13.633333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">111.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1.966667</span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Comprobamos si tenemos valores nulos, y encontramos que dos variables s&iacute;. Veremos m&aacute;s adelante c&oacute;mo lo tratamos.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Out[52]:</span></p>
+
+<pre>
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif">Index([&#39;n_transp_500m&#39;, &#39;min_dist_to_beach&#39;], dtype=&#39;object&#39;)</span></pre>
+
+<h1>&nbsp;</h1>
+
+<h1><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Visualizaci&oacute;n de los datos</strong></span></span></h1>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Como las incorporaciones que hemos hecho, vamos a ver ahora qu&eacute; forma tienen todos nuestros datos y correlaci&oacute;n entre ellos</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura6_histogramas.png" style="height:670px; width:900px" /></span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Vemos que de algunas estaciones hay menos registros, pero es correcto pues algunas estaciones de 2023 se activaron en 2020, 2021 e incluso algunas en 2022</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Tenemos menos registros en 2019 y 2020 que en 2021 y 2022 donde los registrados son muy similares. La raz&oacute;n, el registro de esta informaci&oacute;n p&uacute;blica se inicia a finales de marzo de 2019 (casi tres meses menos de registros) y en 2020 debido a la pandemia el servicio tambi&eacute;n estuvo unas semanas desactivado. Cuando miramos los datos por mesos, apreciamos tambi&eacute;n esas diferencias.</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Si analizamos por dias del mes, tenemos n&uacute;meros de registros bastante similares.</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Por horas el n&uacute;mero de registros es pr&aacute;cticamente igual, eso nos va muy bien para entrenar el modelo</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Ampliamos PPT&nbsp;</span></li>
+</ul>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura6_PPT.png" style="height:111px; margin-left:50px; margin-right:50px; width:150px" /></span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Las variables <strong>altitute</strong>, <strong>PPT</strong>, <strong>RS</strong> tienen cola alargada hacia la derecha, aplicaremos una transformaci&oacute;n logaritmica antes de estandarizar.</span></li>
+</ul>
+
+<h3>&nbsp;</h3>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Outliers</strong></span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Pasamos a analizar con m&aacute;s detalle las variable meteorol&oacute;gicas, min_dist_to_beach, n_transp_500m y la variable target percentange_docks_available</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura6_WeatherOutliers.png" style="height:445px; width:800px" /></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">La <strong>temperatura(T)</strong> y <strong>direcci&oacute;n del viento(DV10)</strong> no tienen outliers, el resto s&iacute;. &nbsp;Analizamos con m&aacute;s detalle las variables&nbsp;<strong>PPT </strong>(precipitaci&oacute;n)<strong> </strong>y<strong> VV10 </strong>(velocidad del viento)</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura6_PPT_VV10_Outliers.png" style="height:335px; width:600px" /></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">La precipitaci&oacute;n ha sido tan escasa en el per&iacute;odo considerado (especialmente seco) que los registros con lluvia de por s&iacute; ya son outliers. No aplicaremos la transformaci&oacute;n basada en los quantiles en estes caso, y estandarizaremos la variable para mitigar el impacto de esos valores tan dispares, pero como veremos m&aacute;s adelante, &eacute;sta es una variable que finalmente no se incluir&aacute; en el modelo.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Por otra parte, <strong>min_dist_to_beach</strong> no tiene outliers, y <strong>n_transp_500m</strong> algunos que tambi&eacute;n trataremos</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura6_distbeachOutliers.png" style="height:269px; width:500px" /><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura6_numPTOutliers.png" style="height:273px; width:500px" /></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">La variable target, como vemos debajo, no tiene outiers, y las variables ctx-4, ctx-3, ctx-2, y ctx-1 obtenidas a partir de la variable target tampoco, como era de esperar</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura6_labelOutliers.png" style="height:225px; width:400px" /><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura6_ctxOutliers.png" style="height:217px; width:400px" /></span></p>
+
+<p>&nbsp;</p>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Transformaciones</strong></span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Despu&eacute;s de analizar las gr&aacute;ficas nos planteamos las siguientes transformaciones, donde &nbsp;<strong>Replace_Outliers_2_NaN </strong>es una funci&oacute;n que calcula los l&iacute;mites superiore e inferior a partir de los quantiles 75% y 25% y todos los valores por encima o por debajo se redefinen como NaN.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Todos los NaN de cada variable se reemplazar&aacute;n por el valor de la mediana de dicha variable. Todas las variables num&eacute;ricas ser&aacute;n tambi&eacute;n estandarizadas</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">variables num&eacute;ricas</span></span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num1_attribs=[&#39;<strong>altitude</strong>&#39;,&#39;<strong>PPT</strong>&#39;]<br />
+num1_pipeline = Pipeline([<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&#39;imputer&#39;, <strong>SimpleImputer</strong>(strategy=&quot;median&quot;)),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&#39;log&#39;,FunctionTransforme<strong>r</strong>(<strong>np.log1p</strong>)),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&#39;std_scaler&#39;, <strong>StandardScaler</strong>()),<br />
+&nbsp; &nbsp; ])</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num2_attribs = [&#39;<strong>capacity</strong>&#39;,&#39;<strong>T</strong>&#39;,&#39;<strong>min_dist_to_beach</strong>&#39;] &nbsp;<br />
+num2_pipeline = Pipeline([<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&#39;imputer&#39;, <strong>SimpleImputer</strong>(strategy=&quot;median&quot;)),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&#39;std_scaler&#39;, <strong>StandardScaler</strong>()),<br />
+&nbsp; &nbsp; ])</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num3_attribs=[&#39;ctx-4&#39;,&#39;ctx-3&#39;,&#39;ctx-2&#39;,&#39;ctx-1&#39;,&#39;weekend&#39;,&#39;peekhour&#39;,&#39;holiday&#39;] #passthrough</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">num4_attribs=[&#39;<strong>n_transp_500m</strong>&#39;,&#39;<strong>HR</strong>&#39;,&#39;<strong>VV10</strong>&#39;,&#39;<strong>P</strong>&#39;,&#39;<strong>RS</strong>&#39;]<br />
+num4_pipeline = Pipeline([<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&#39;replace_outliers&#39;,<strong>Replace_Outliers_2_NaN</strong>()),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&#39;imputer&#39;, <strong>SimpleImputer</strong>(strategy=&quot;median&quot;)),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&#39;std_scaler&#39;, <strong>StandardScaler</strong>()),<br />
+&nbsp; &nbsp; ])</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">variabales que pasan a ser tratadas como categ&oacute;ricas</span></span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">cat1_attribs = [&#39;<strong>station_id</strong>&#39;,&#39;<strong>post_code</strong>&#39;,&#39;<strong>year</strong>&#39;,&#39;<strong>month</strong>&#39;,&#39;<strong>hour</strong>&#39;,&#39;<strong>season</strong>&#39;]<br />
+cat1_pipeline = Pipeline([<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&#39;transform_to_Cat&#39;,FunctionTransformer(func = <strong>transform_Num_to_Cat</strong>,validate=False)),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&#39;imputer&#39;, <strong>SimpleImputer</strong>(strategy=&quot;constant&quot;,fill_value=&#39;Unknown&#39;)),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&#39;ordinal_encoder&#39;, <strong>OrdinalEncoder</strong>()),<br />
+&nbsp; &nbsp; ])<br />
+cat2_attribs=[&#39;<strong>zone</strong>&#39;] #ja era categ&ograve;rica<br />
+cat2_pipeline = Pipeline([<br />
+&nbsp; &nbsp; (&#39;imputer&#39;, <strong>SimpleImputer</strong>(strategy=&quot;constant&quot;,fill_value=&#39;Unknown&#39;)), &nbsp;<br />
+&nbsp; &nbsp; (&#39;one_hot_encoder&#39;, <strong>OneHotEncoder</strong>(handle_unknown=&#39;ignore&#39;)),<br />
+&nbsp; &nbsp; ])</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9">unimos todas las transformaciones</span></span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">full_pipeline = ColumnTransformer([<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&quot;num1&quot;, num1_pipeline, num1_attribs),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&quot;num2&quot;, num2_pipeline, num2_attribs),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&quot;cat1&quot;, cat1_pipeline, cat1_attribs),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&quot;cat2&quot;, cat2_pipeline, cat2_attribs),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&quot;num3&quot;, &#39;passthrough&#39;, num3_attribs),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; (&quot;num4&quot;, num4_pipeline, num4_attribs),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; ])</span></p>
+
+<p style="margin-left:40px">&nbsp;</p>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Correlaci&oacute;n entre las distintas variables y percentage_docks_avaialble</strong></span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura6_corrmatrix.png" style="height:693px; width:900px" /></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Las variables <strong>ctx-4</strong>, <strong>ctx-3</strong>, <strong>ctx-2</strong> y <strong>ctx-1</strong> est&aacute;n fuertemente correlacionadas con la variable target, percentage_docks_available, como era de esperar por la manera en que se han calculado.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">La variable del tiempo <strong>RS</strong> (Irradiancia solar global) est&aacute; bastante correlacionada con <strong>HR</strong>(humedat relativa) y con <strong>T</strong>(temperatura). Nos planteamos prescindir de RS.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Como punto de partida prescindiremos de la variable <strong>DV10</strong>(direcci&oacute;n del viento).</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><strong>altitude</strong> y <strong>min_dist_to_beach</strong> tienen correlaci&oacute;n con la variable target, y aunque entre ellas est&aacute;n fuertemente correlacionadas puesto que las estacioneos en la playa tienen altitud cero o casi, su significado es bien distinto pq el uso de las estaciones de bicicletas de la zona de playa no viene influenciado directametne por la altura (nivel del mar) a la que estan sin&oacute; por encontrarse en un sitio de mucho inter&eacute;s en el tiempo libre.</span></p>
+
+<p>&nbsp;</p>
+
+<h1><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Modelo: selecci&oacute;n, entrenamiento, scores</strong></span></span></h1>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Estratificaci&oacute;n, split train - test&nbsp;</strong></span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Es momento de proceder a dividir el dataset entre la parte que usaremos para el entrenamiento y la parte que reservaremos para validar el modelo (test). Para asegurarnos que ambos sets mantienen la misma proporci&oacute;n de tipos de datos, evaluamos varias formas de estratificar los datos:</span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Opci&oacute;n 1&nbsp;&nbsp;[&#39;<strong>station_id</strong>&#39;,&#39;<strong>month</strong>&#39;,&#39;<strong>hour</strong>&#39;,&#39;<strong>day</strong>&#39;] : no funciona (obtenemos el error&nbsp;ValueError: The least populated class in y has only&nbsp;1 member, which is too few. The minimum number of groups for any class cannot be less than 2.)</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Opci&oacute;n 2&nbsp;[&#39;<strong>year</strong>&#39;,&#39;<strong>month</strong>&#39;,&#39;<strong>hour</strong>&#39;,&#39;<strong>day</strong>&#39;] : realizamos un primer entrenamientos con una simple regresi&oacute;n lineal&nbsp;y vemos que nos ayuda a hacer una mejor predicci&oacute;n, con menos error MSE</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Opci&oacute;n 3 [&#39;<strong>month</strong>&#39;,&#39;<strong>hour</strong>&#39;,&#39;<strong>day</strong>&#39;] : mejores resultados que si no estratificamos, pero no mejora la opci&oacute;n anterior</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Opci&oacute;n 4 [&#39;<strong>disponibilitat</strong>&#39;] : creamos una variable categ&oacute;rica a partir de la variable target, percentage_docks_available, que nos clasifica cada estaci&oacute;n en 5 categor&iacute;as posibles seg&uacute;n el nivel de disponibilidad de docks:</span></li>
+</ul>
+
+<p style="margin-left:80px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">&nbsp;Out[43]:</span></span></p>
+
+<pre style="margin-left:80px">
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">[&#39;for&ccedil;a ple&#39;, &#39;ple&#39;, &#39;mig buit&#39;, &#39;quasi buit&#39;, &#39;buit&#39;]
+Categories (5, object): [&#39;ple&#39; &lt; &#39;for&ccedil;a ple&#39; &lt; &#39;mig buit&#39; &lt; &#39;quasi buit&#39; &lt; &#39;buit&#39;]</span>
+</span></pre>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Procedemos a estratificar seg&uacute;n opci&oacute;n 4 y a continuaci&oacute;n eliminamos las variables target y la categ&oacute;rica disponibilitat usada para estratificar, pues no deben incluirse como variables de entrenamiento,. Tambi&eacute;n comprobamos shape de ambos datasets :</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">In&nbsp;[55]:</span></span></p>
+
+<pre style="margin-left:40px">
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">labels=bicing[&#39;percentage_docks_available&#39;].copy()</span></span></pre>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">In&nbsp;[56]:</span></span></p>
+
+<pre style="margin-left:40px">
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">labels.isna().any()</span></span></pre>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">Out[56]:</span></span></p>
+
+<pre style="margin-left:40px">
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">False</span></span></pre>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">In&nbsp;[57]:</span></span></p>
+
+<pre style="margin-left:40px">
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">X_train, X_test, y_train, y_test = train_test_split(bicing,labels,test_size=.2,random_state=seed,shuffle=True,stratify=bicing[&#39;disponibilitat&#39;])</span></span></pre>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">In&nbsp;[58]:</span></span></p>
+
+<pre style="margin-left:40px">
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">for set_ in (X_train, X_test):</span></span></pre>
+
+<pre style="margin-left:40px">
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">    set_.drop(columns=[&#39;percentage_docks_available&#39;,&#39;disponibilitat&#39;],inplace=True)</span></span></pre>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">In&nbsp;[59]:</span></span></p>
+
+<pre style="margin-left:40px">
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">Training Shape: X (2378084, 26) , y: (2378084,)
+Testing Shape: X (594522, 26) , y: (594522,)</span></span></pre>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">El dataset de entrenamiento, <strong>X_train</strong>, tiene este aspecto:</span></p>
+
+<table border="1">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">station_id</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">year</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">month</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">day</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">hour</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">capacity</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">altitude</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-4</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-3</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">ctx-2</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">holiday</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">season</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">zone</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">RS</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">PPT</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">P</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">HR</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">T</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">DV10</span></th>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">VV10</span></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1307303</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">221</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2022</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">11</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">7</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">17</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">24.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">68.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.881410</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.906250</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.850694</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">other</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">23.666667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">997.766667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">75.666667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">17.566667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">231.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.300000</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">126916</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">22</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2021</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">22</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">15</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">19.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">28.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.732456</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.832536</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.688596</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">other</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">689.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1000.266667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">65.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">28.233333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">159.666667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">3.000000</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">155335</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">27</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2019</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">10</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">21</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">21.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">38.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.869048</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.892857</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.944444</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">4</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">other</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">994.200000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">68.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">20.133333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">109.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2.033333</span></td>
+		</tr>
+		<tr>
+			<th><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1912954</span></th>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">319</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">2020</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">20</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">13</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">31.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">51.0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.271505</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.352151</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.403226</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">...</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">other</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">135.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">0.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">1004.133333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">57.000000</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">8.566667</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">60.333333</span></td>
+			<td><span style="font-family:Trebuchet MS,Helvetica,sans-serif">9.866667</span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Column Transformers</strong></span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Procedemos a aplicar las transformaciones comentadas en la secci&oacute;n anterior: fit &amp; transform al set de entrenamiento , y s&oacute;lo transform al set de validaci&oacute;n. Comprobamos que mantenemos las mismas dimensiones de los sets:</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">train_prepared = full_pipeline.<strong>fit_transform</strong>(X_train)</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">Out[186]:</span></span></p>
+
+<pre style="margin-left:40px">
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">array([[ 1.12779005, -0.12501115, -0.47456499, ..., -0.02281921,
+         0.21363936, -0.33404425],
+       [ 0.2531122 , -0.12501115, -1.25540877, ..., -0.09947645,
+        -0.02402338, -0.49281287],
+       [-0.28581762,  0.45802176, -0.94307126, ..., -0.09947645,
+        -0.02402338, -0.49281287],
+       ...,
+       [ 0.91714057, -0.12501115, -0.47456499, ..., -0.09947645,
+        -0.02402338, -0.49281287],
+       [ 0.55206692, -0.12501115, -0.94307126, ..., -0.32944819,
+        -0.69457182, -0.49281287],
+       [ 0.84236   , -0.12501115,  0.61861632, ..., -0.09947645,
+        -0.02402338, -0.49281287]])</span>
+</span></pre>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">train_prepared.shape</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">Out[187]:</span></span></p>
+
+<pre style="margin-left:40px">
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">(2378084, 28) </span></span></pre>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif">test_prepared = full_pipeline.<strong>transform</strong>(X_test)</span></p>
+
+<p style="margin-left:40px"><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">Out[188]:</span></span></p>
+
+<pre style="margin-left:40px">
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">(594522, 28) </span></span></pre>
+
+<h3>&nbsp;</h3>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Entrenamiento</strong></span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Hacemos un primer entrenamiento con los siguientes modelos:</span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Linea Regression</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">KNeighborsRegressor</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">RandomForestRegressor</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">GradientBoostingRegressor</span></li>
+</ul>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">El estad&iacute;stico que usaremos para comparar el funcionamento de cada modelo es Mean Square Error. Parece que los mejores modelos son Random Forest Regressor y Gradient Boosting Regressor, pero procedemos a realizar un cross_validation con 10 folks, para valorar el funcionamiento en promedio seg&uacute;n va variando la parte sobre la que se hace el &nbsp;training. Los resultados obtenidos son:</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura7_cross_validation_cv10.png" style="height:129px; width:250px" /></span></p>
+
+<h1><span style="font-family:Trebuchet MS,Helvetica,sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura7_modelscomparison.png" style="height:397px; width:800px" /></span></h1>
+
+<h3><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>B&uacute;squeda de los mejores hiperpar&aacute;metros</strong></span></span></h3>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Por ahora parece que el mejor modelo es Random Forest Regressor. Procedemos a hacer una b&uacute;squeda para encontrar los mejore &nbsp;hiperpar&aacute;metros. Tambi&eacute;n en este caso aplicaremos k-fold (pero m&aacute;s peque&ntilde;o pues nos enfrentamos a &nbsp;limitaciones computacionales de nuestros laptops).</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura8_hyperparametersRF.png" style="height:228px; width:700px" /></span></p>
+
+<h1><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura8_bestRF_Model.png" style="height:126px; width:600px" /> </span></h1>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Score predicci&oacute;n set de validaci&oacute;n con Random Forest Regressor</strong></span></span></p>
+
+<pre>
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif">MSE (train | test):
+0.0049602399223658096   0.010040911898578834
+R2 (train | test):
+0.9303457191788437   0.8534793570213218</span></pre>
+
+<h1><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura8_bestRF_Features.png" style="height:450px; width:600px" /></span></h1>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Dado que no hab&iacute;a mucha diferencia entres los estimadores Random Forest Regresso y <strong>Grandient Boosting Regressor</strong>, exploramos de nuevo el segundo estimador y buscamos los mejores hiperpar&aacute;metros , para ver si mejoramos resultados. El mejor resultado lo obtenemos con</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">GradientBoostingRegressor(n_estimators=2000,random_state=seed,max_depth=6)</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Score predicci&oacute;n set de validaci&oacute;n con Gradient Boosting Regressor</strong></span></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="font-size:11px">MSE (train | test):<br />
+0.009707910879462097 0.009752140802141927<br />
+R2 (train | test):<br />
+0.8641781895663517 0.863633803236243</span></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura8_bestGB_Features.png" style="height:450px; width:600px" /></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Como podemos ver, el peso de los par&aacute;metros es muy distinto a los obtenido con el estimador Random Forest Regressor.</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Decidimos &nbsp;exploramos un estimador m&aacute;s,&nbsp;<strong>XGBoost, </strong>que es el que mejor nos acaba funcionando. Despu&eacute;s de obtener los primeros resultados, vemos que las variables &#39;<strong>season</strong>&#39; (muy correlacionada con la variable &#39;hour&#39;) y &#39;<strong>ppt</strong>&#39; no tienen apenas peso, y probamos elimin&aacute;ndolas, lo cual nos da una lijera mejor del modelo:</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#27ae60"><strong>import</strong></span> xgboost <span style="color:#27ae60"><strong>as</strong></span> xgb<br />
+xgb_model = xgb.XGBRegressor(n_estimators=<strong><span style="color:#27ae60">1000</span></strong>, early_stopping_rounds=<span style="color:#27ae60"><strong>10</strong></span>)</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">xgb_model.fit(train_prepared, y_train, eval_set=[(train_prepared, y_train), (test_prepared, y_test)], verbose=50)</span></p>
+
+<pre>
+[0]	    validation_0-rmse:0.22157	validation_1-rmse:0.22145
+[50]	validation_0-rmse:0.10083	validation_1-rmse:0.10044
+[100]	validation_0-rmse:0.09930	validation_1-rmse:0.09926
+[150]	validation_0-rmse:0.09835	validation_1-rmse:0.09863
+[200]	validation_0-rmse:0.09769	validation_1-rmse:0.09826
+[250]	validation_0-rmse:0.09705	validation_1-rmse:0.09793
+[300]	validation_0-rmse:0.09647	validation_1-rmse:0.09766
+[350]	validation_0-rmse:0.09608	validation_1-rmse:0.09757
+[400]	validation_0-rmse:0.09571	validation_1-rmse:0.09750
+[450]	validation_0-rmse:0.09529	validation_1-rmse:0.09737
+[500]	validation_0-rmse:0.09486	validation_1-rmse:0.09722
+[550]	validation_0-rmse:0.09451	validation_1-rmse:0.09716
+[556]	validation_0-rmse:0.09449	validation_1-rmse:0.09716</pre>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">results=xgb_model.evals_result()<br />
+plt.plot(results[&#39;<span style="color:#e74c3c">validation_0</span>&#39;][&#39;<span style="color:#e74c3c">rmse</span>&#39;], label=&#39;<span style="color:#e74c3c">train</span>&#39;)<br />
+plt.plot(results[&#39;<span style="color:#e74c3c">validation_1</span>&#39;][&#39;<span style="color:#e74c3c">rmse</span>&#39;], label=&#39;<span style="color:#e74c3c">test</span>&#39;)<br />
+plt.legend()<br />
+plt.show()</span></p>
+
+<pre>
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://ckeditor.com/apps/ckfinder/userfiles/files/figura8_XGB_performance.png" style="height:413px; width:556px" />
+
+<span style="color:#2980b9"><strong>Score predicci&oacute;n set validaci&oacute;n con XGBoost
+</strong></span></span></pre>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#16a085">&nbsp;# Make predictions</span><br />
+y_train_xgb = xgb_model.predict(train_prepared)</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">test_prepared=full_pipeline.transform(X_test)</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">y_test_xgb = xgb_model.predict(test_prepared)</span></p>
+
+<pre>
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#16a085"># Compute MSE for training and testing sets</span>
+print(&#39;MSE (train | test):&#39;)
+print(mean_squared_error(y_train_xgb, y_train), mean_squared_error(y_test_xgb, y_test))
+print(&#39;R2 (train | test):&#39;)
+print(r2_score(y_train_xgb, y_train), r2_score(y_test_xgb, y_test))
+</span><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>
+</strong></span>MSE (train | test):
+0.008935940587087248 0.009439234663387547
+R2 (train | test):
+0.8761112236824559 0.8690996304193535</span></pre>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#16a085"># Intervalo de confianza del set de test&nbsp;</span></span><br />
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#27ae60"><strong>from</strong></span> scipy <strong><span style="color:#27ae60">import</span></strong> stats<br />
+confidence = <span style="color:#27ae60">0.95</span><br />
+squared_errors = (y_test_xgb <span style="color:#9b59b6">-</span> y_test) <span style="color:#9b59b6"><strong>**</strong></span><span style="color:#27ae60"> 2</span><br />
+stats.t.interval(confidence, <span style="color:#27ae60">len</span>(squared_errors) <span style="color:#9b59b6">-</span><span style="color:#27ae60"> 1</span>,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;loc<span style="color:#9b59b6">=</span>squared_errors.mean(),<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;scale<span style="color:#9b59b6">=</span>stats.sem(squared_errors))</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">(0.009365907226865578, 0.009512562099909517)</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Feature importance con XGBoost</strong></span></span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#16a085">## Best features according to XGBoost</span></span><br />
+<span style="font-family:Trebuchet MS,Helvetica,sans-serif">feature_importances <span style="color:#9b59b6">=</span> xgb_model.feature_importances_<br />
+cat_one_hot_attribs<span style="color:#9b59b6"> =</span> list(full_pipeline.named_transformers_[&quot;<span style="color:#e74c3c">cat2</span>&quot;][&#39;<span style="color:#e74c3c">one_hot_encode</span>r&#39;].categories_[0])<br />
+attributes = num1_attribs<span style="color:#9b59b6">+</span>num2_attribs<span style="color:#9b59b6">+</span>cat1_attribs<span style="color:#9b59b6">+</span>cat_one_hot_attribs<span style="color:#9b59b6">+</span>num3_attribs<span style="color:#9b59b6">+</span>num4_attribs<br />
+list_sorted<span style="color:#9b59b6">=</span><span style="color:#27ae60">sorted</span>(<span style="color:#27ae60">zip</span>(feature_importances, attributes), reverse<span style="color:#9b59b6">=</span><strong><span style="color:#27ae60">True</span></strong>)<br />
+list_sorted</span></p>
+
+<pre>
+[(0.8550421, &#39;ctx-1&#39;),
+ (0.01757553, &#39;peekhour&#39;),
+ (0.01756528, &#39;ctx-2&#39;),
+ (0.0119349705, &#39;pcatalunya&#39;),
+ (0.009942545, &#39;hour&#39;),
+ (0.009657315, &#39;other&#39;),
+ (0.0093416255, &#39;uni&#39;),
+ (0.007731035, &#39;platges&#39;),
+ (0.0076978267, &#39;altitude&#39;),
+ (0.00678102, &#39;min_dist_to_beach&#39;),
+ (0.0067344415, &#39;weekend&#39;),
+ (0.0062929047, &#39;post_code&#39;),
+ (0.0045238584, &#39;year&#39;),
+ (0.0035329368, &#39;capacity&#39;),
+ (0.00350229, &#39;holiday&#39;),
+ (0.0034527145, &#39;n_transp_500m&#39;),
+ (0.0032340602, &#39;station_id&#39;),
+ (0.0030224612, &#39;RS&#39;),
+ (0.0027051193, &#39;alta&#39;),
+ (0.0023601355, &#39;month&#39;),
+ (0.0022260565, &#39;ctx-3&#39;),
+ (0.0020159995, &#39;ctx-4&#39;),
+ (0.0016728155, &#39;T&#39;),
+ (0.0014549182, &#39;HR&#39;)]</pre>
+
+<h1><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><img src="https://raw.githubusercontent.com/olgallima/olgallima.github.io/main/figura8_bestXGB_Features.png" style="height:574px; width:600px" /></span></h1>
+
+<h2><span style="font-family:Trebuchet MS,Helvetica,sans-serif"><span style="color:#2980b9"><strong>Explicaci&oacute;n del modelo:</strong></span></span></h2>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">La variable que mayormente define el modelo, m&aacute;s de un 80%, es el estado de la estaci&oacute;n la hora previa a la predicci&oacute;n.&nbsp;</span></p>
+
+<p><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Del resto de variables, las que m&aacute;s peso tienen son:</span></p>
+
+<ul>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">la hora del dia, y sobretodo si es hora punta ( de 8 a 10 de la ma&ntilde;ana y de 5 a 7 de la tarde). Esta informaci&oacute;n ya se intuy&oacute; en el an&aacute;lisis inicial de los datos&nbsp;</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">la situaci&oacute;n de la estaci&oacute;n dos horas antes</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">la clasificaci&oacute;n en cinco grupos que hemos hecho de las estaciones: &nbsp;las del centro (pcatalunya), las de la zona de playas, las de la zona universitaria (diagonal), las que se encuentran a m&aacute;s de 60 m del&nbsp;nivel del mar, y el resto, han contribuido claramente a definir el modelo de predicci&oacute;n. Nos est&aacute; diciendo que cada una de estas zonas tienen un comportamiento parecido.</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Que sea fin de semana o no y la altitud a la que se encuentra la estaci&oacute;n tambi&eacute;n contribuyen</span></li>
+	<li><span style="font-family:Trebuchet MS,Helvetica,sans-serif">Las variables meteorol&oacute;gicas son las que tienen menos influencia, los d&iacute;as/horas con radiaci&oacute;n solar (RS) muy&nbsp;fuerte puede afectar al uso de la bicicleta, pero en general el tiempo no parece tener un peso relevante, quiz&aacute;s por la climatologia de nuestra ciudad, poca lluvia y pocos dias muy frios</span></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
 </html>
